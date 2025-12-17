@@ -170,7 +170,7 @@
                     <div class="p-field p-col-12">
                         <p:outputLabel for="unidadeSaude" value="Unidade de Saúde:"/>
                         <p:selectOneMenu id="unidadeSaude" value="#{salaBean.sala.unidadeSaude}" 
-                                         converter="omnifaces.SelectItemsConverter"
+                                         converter="unidadeSaudeConverter"
                                          required="true" requiredMessage="Unidade de Saúde é obrigatória">
                             <f:selectItem itemLabel="Selecione..." itemValue="#{null}"/>
                             <f:selectItems value="#{salaBean.unidadesSaude}" 

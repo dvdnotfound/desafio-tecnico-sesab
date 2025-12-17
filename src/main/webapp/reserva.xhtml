@@ -118,7 +118,7 @@
                     <div class="p-field p-col-12 p-md-6">
                         <p:outputLabel for="sala" value="Sala:"/>
                         <p:selectOneMenu id="sala" value="#{reservaBean.reserva.sala}" 
-                                         converter="omnifaces.SelectItemsConverter"
+                                         converter="salaConverter"
                                          required="true" requiredMessage="Sala é obrigatória">
                             <f:selectItem itemLabel="Selecione..." itemValue="#{null}"/>
                             <f:selectItems value="#{reservaBean.salas}" 
@@ -131,7 +131,7 @@
                     <div class="p-field p-col-12 p-md-6">
                         <p:outputLabel for="usuario" value="Usuário:"/>
                         <p:selectOneMenu id="usuario" value="#{reservaBean.reserva.usuario}" 
-                                         converter="omnifaces.SelectItemsConverter"
+                                         converter="usuarioConverter"
                                          required="true" requiredMessage="Usuário é obrigatório">
                             <f:selectItem itemLabel="Selecione..." itemValue="#{null}"/>
                             <f:selectItems value="#{reservaBean.usuarios}" 
