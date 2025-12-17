@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>Gerenciamento de Usuários</title>
+    <h:outputStylesheet library="css" name="style.css"/>
+</h:head>
+
+<h:body>
+    <div class="container">
+        <h1>Gerenciamento de Usuários</h1>
+        
+        <p:button value="Voltar ao Menu" outcome="index" icon="pi pi-arrow-left" 
+                  styleClass="ui-button-secondary" style="margin-bottom: 20px;"/>
+        
+        <h:form id="formUsuario">
+            <p:messages id="messages" showDetail="true" closable="true"/>
+            
+            <p:panel header="Cadastro de Usuário">
+                <div class="p-fluid">
+                    <div class="p-field">
+                        <p:outputLabel for="nome" value="Nome:"/>
+                        <p:inputText id="nome" value="#{usuarioBean.usuario.nome}" 
+                                     required="true" requiredMessage="Nome é obrigatório"/>
+                    </div>
+                    
+                    <div class="p-field">
+                        <p:outputLabel for="email" value="E-mail:"/>
+                        <p:inputText id="email" value="#{usuarioBean.usuario.email}" 
+                                     required="true" requiredMessage="E-mail é obrigatório"/>
+                    </div>
+                    
+                    <div class="p-field">
+                        <p:outputLabel for="cpf" value="CPF:"/>
+                        <p:inputMask id="cpf" value="#{usuarioBean.usuario.cpf}" 
+                                     mask="999.999.999-99"
+                                     required="true" requiredMessage="CPF é obrigatório"/>
+                    </div>
+                    
+                    <div class="p-field" style="margin-top: 20px;">
+                        <p:commandButton value="Salvar" 
+                                         action="#{usuarioBean.salvar}" 
+                                         update="formUsuario:messages formUsuario:tabelaUsuarios"
+                                         icon="pi pi-save"
+                                         styleClass="ui-button-success"/>
+                        
+                        <p:commandButton value="Novo" 
+                                         action="#{usuarioBean.novo}" 
+                                         update="formUsuario"
+                                         process="@this"
+                                         icon="pi pi-plus"
+                                         styleClass="ui-button-info"
+                                         style="margin-left: 10px;"/>
+                    </div>
+                </div>
+            </p:panel>
+            
+            <p:panel header="Lista de Usuários" style="margin-top: 20px;">
+                <p:dataTable id="tabelaUsuarios" 
+                             value="#{usuarioBean.usuarios}" 
+                             var="usuario"
+                             paginator="true" 
+                             rows="10"
+                             emptyMessage="Nenhum usuário cadastrado">
+                    
+                    <p:column headerText="ID" style="width: 50px;">
+                        <h:outputText value="#{usuario.id}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Nome" sortBy="#{usuario.nome}" filterBy="#{usuario.nome}">
+                        <h:outputText value="#{usuario.nome}"/>
+                    </p:column>
+                    
+                    <p:column headerText="E-mail" sortBy="#{usuario.email}">
+                        <h:outputText value="#{usuario.email}"/>
+                    </p:column>
+                    
+                    <p:column headerText="CPF">
+                        <h:outputText value="#{usuario.cpf}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Data Cadastro" sortBy="#{usuario.dataCadastro}">
+                        <h:outputText value="#{usuario.dataCadastro}">
+                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                        </h:outputText>
+                    </p:column>
+                    
+                    <p:column headerText="Ações" style="width: 150px; text-align: center;">
+                        <p:commandButton icon="pi pi-pencil" 
+                                         action="#{usuarioBean.editar(usuario)}"
+                                         update="formUsuario"
+                                         styleClass="ui-button-warning"
+                                         title="Editar"/>
+                        
+                        <p:commandButton icon="pi pi-trash" 
+                                         action="#{usuarioBean.excluir(usuario)}"
+                                         update="formUsuario:messages formUsuario:tabelaUsuarios"
+                                         styleClass="ui-button-danger"
+                                         style="margin-left: 5px;"
+                                         title="Excluir">
+                            <p:confirm header="Confirmação" 
+                                       message="Deseja realmente excluir este usuário?"
+                                       icon="pi pi-exclamation-triangle"/>
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+            </p:panel>
+            
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check"/>
+                <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times"/>
+            </p:confirmDialog>
+        </h:form>
+    </div>
+</h:body>
+</html>

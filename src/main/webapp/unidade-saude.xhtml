@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>Gerenciamento de Unidades de Saúde</title>
+    <h:outputStylesheet library="css" name="style.css"/>
+</h:head>
+
+<h:body>
+    <div class="container">
+        <h1>Gerenciamento de Unidades de Saúde</h1>
+        
+        <p:button value="Voltar ao Menu" outcome="index" icon="pi pi-arrow-left" 
+                  styleClass="ui-button-secondary" style="margin-bottom: 20px;"/>
+        
+        <h:form id="formUnidade">
+            <p:messages id="messages" showDetail="true" closable="true"/>
+            
+            <p:panel header="Cadastro de Unidade de Saúde">
+                <div class="p-fluid p-formgrid p-grid">
+                    <div class="p-field p-col-12 p-md-6">
+                        <p:outputLabel for="nome" value="Nome:"/>
+                        <p:inputText id="nome" value="#{unidadeSaudeBean.unidadeSaude.nome}" 
+                                     required="true" requiredMessage="Nome é obrigatório"/>
+                    </div>
+                    
+                    <div class="p-field p-col-12 p-md-6">
+                        <p:outputLabel for="razaoSocial" value="Razão Social:"/>
+                        <p:inputText id="razaoSocial" value="#{unidadeSaudeBean.unidadeSaude.razaoSocial}" 
+                                     required="true" requiredMessage="Razão social é obrigatória"/>
+                    </div>
+                    
+                    <div class="p-field p-col-12 p-md-4">
+                        <p:outputLabel for="sigla" value="Sigla:"/>
+                        <p:inputText id="sigla" value="#{unidadeSaudeBean.unidadeSaude.sigla}"/>
+                    </div>
+                    
+                    <div class="p-field p-col-12 p-md-4">
+                        <p:outputLabel for="cnpj" value="CNPJ:"/>
+                        <p:inputMask id="cnpj" value="#{unidadeSaudeBean.unidadeSaude.cnpj}" 
+                                     mask="99.999.999/9999-99"
+                                     required="true" requiredMessage="CNPJ é obrigatório"/>
+                    </div>
+                    
+                    <div class="p-field p-col-12 p-md-4">
+                        <p:outputLabel for="cnes" value="CNES:"/>
+                        <p:inputText id="cnes" value="#{unidadeSaudeBean.unidadeSaude.cnes}"/>
+                    </div>
+                    
+                    <div class="p-field p-col-12" style="margin-top: 20px;">
+                        <p:commandButton value="Salvar" 
+                                         action="#{unidadeSaudeBean.salvar}" 
+                                         update="formUnidade:messages formUnidade:tabelaUnidades"
+                                         icon="pi pi-save"
+                                         styleClass="ui-button-success"/>
+                        
+                        <p:commandButton value="Novo" 
+                                         action="#{unidadeSaudeBean.novo}" 
+                                         update="formUnidade"
+                                         process="@this"
+                                         icon="pi pi-plus"
+                                         styleClass="ui-button-info"
+                                         style="margin-left: 10px;"/>
+                    </div>
+                </div>
+            </p:panel>
+            
+            <p:panel header="Lista de Unidades de Saúde" style="margin-top: 20px;">
+                <p:dataTable id="tabelaUnidades" 
+                             value="#{unidadeSaudeBean.unidadesSaude}" 
+                             var="unidade"
+                             paginator="true" 
+                             rows="10"
+                             emptyMessage="Nenhuma unidade cadastrada">
+                    
+                    <p:column headerText="ID" style="width: 50px;">
+                        <h:outputText value="#{unidade.id}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Nome" sortBy="#{unidade.nome}" filterBy="#{unidade.nome}">
+                        <h:outputText value="#{unidade.nome}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Razão Social">
+                        <h:outputText value="#{unidade.razaoSocial}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Sigla">
+                        <h:outputText value="#{unidade.sigla}"/>
+                    </p:column>
+                    
+                    <p:column headerText="CNPJ">
+                        <h:outputText value="#{unidade.cnpj}"/>
+                    </p:column>
+                    
+                    <p:column headerText="CNES">
+                        <h:outputText value="#{unidade.cnes}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Ações" style="width: 150px; text-align: center;">
+                        <p:commandButton icon="pi pi-pencil" 
+                                         action="#{unidadeSaudeBean.editar(unidade)}"
+                                         update="formUnidade"
+                                         styleClass="ui-button-warning"
+                                         title="Editar"/>
+                        
+                        <p:commandButton icon="pi pi-trash" 
+                                         action="#{unidadeSaudeBean.excluir(unidade)}"
+                                         update="formUnidade:messages formUnidade:tabelaUnidades"
+                                         styleClass="ui-button-danger"
+                                         style="margin-left: 5px;"
+                                         title="Excluir">
+                            <p:confirm header="Confirmação" 
+                                       message="Deseja realmente excluir esta unidade?"
+                                       icon="pi pi-exclamation-triangle"/>
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+            </p:panel>
+            
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check"/>
+                <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times"/>
+            </p:confirmDialog>
+        </h:form>
+    </div>
+</h:body>
+</html>

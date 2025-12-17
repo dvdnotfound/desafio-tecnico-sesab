@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>Gerenciamento de Reservas</title>
+    <h:outputStylesheet library="css" name="style.css"/>
+</h:head>
+
+<h:body>
+    <div class="container">
+        <h1>Gerenciamento de Reservas</h1>
+        
+        <p:button value="Voltar ao Menu" outcome="index" icon="pi pi-arrow-left" 
+                  styleClass="ui-button-secondary" style="margin-bottom: 20px;"/>
+        
+        <h:form id="formReserva">
+            <p:messages id="messages" showDetail="true" closable="true"/>
+            
+            <p:panel header="Criar Reserva">
+                <div class="p-fluid p-formgrid p-grid">
+                    <div class="p-field p-col-12 p-md-6">
+                        <p:outputLabel for="sala" value="Sala:"/>
+                        <p:selectOneMenu id="sala" value="#{reservaBean.reserva.sala}" 
+                                         converter="omnifaces.SelectItemsConverter"
+                                         required="true" requiredMessage="Sala é obrigatória">
+                            <f:selectItem itemLabel="Selecione..." itemValue="#{null}"/>
+                            <f:selectItems value="#{reservaBean.salas}" 
+                                          var="sala" 
+                                          itemLabel="#{sala.nome} - #{sala.unidadeSaude.nome}" 
+                                          itemValue="#{sala}"/>
+                        </p:selectOneMenu>
+                    </div>
+                    
+                    <div class="p-field p-col-12 p-md-6">
+                        <p:outputLabel for="usuario" value="Usuário:"/>
+                        <p:selectOneMenu id="usuario" value="#{reservaBean.reserva.usuario}" 
+                                         converter="omnifaces.SelectItemsConverter"
+                                         required="true" requiredMessage="Usuário é obrigatório">
+                            <f:selectItem itemLabel="Selecione..." itemValue="#{null}"/>
+                            <f:selectItems value="#{reservaBean.usuarios}" 
+                                          var="usuario" 
+                                          itemLabel="#{usuario.nome} - #{usuario.cpf}" 
+                                          itemValue="#{usuario}"/>
+                        </p:selectOneMenu>
+                    </div>
+                    
+                    <div class="p-field p-col-12 p-md-6">
+                        <p:outputLabel for="dataHoraInicio" value="Data/Hora Início:"/>
+                        <p:calendar id="dataHoraInicio" 
+                                    value="#{reservaBean.reserva.dataHoraInicio}" 
+                                    pattern="dd/MM/yyyy HH:mm"
+                                    stepMinute="15"
+                                    showTime="true"
+                                    required="true" 
+                                    requiredMessage="Data/hora início é obrigatória"/>
+                    </div>
+                    
+                    <div class="p-field p-col-12 p-md-6">
+                        <p:outputLabel for="dataHoraFim" value="Data/Hora Fim:"/>
+                        <p:calendar id="dataHoraFim" 
+                                    value="#{reservaBean.reserva.dataHoraFim}" 
+                                    pattern="dd/MM/yyyy HH:mm"
+                                    stepMinute="15"
+                                    showTime="true"
+                                    required="true" 
+                                    requiredMessage="Data/hora fim é obrigatória"/>
+                    </div>
+                    
+                    <div class="p-field p-col-12" style="margin-top: 20px;">
+                        <p:commandButton value="Criar Reserva" 
+                                         action="#{reservaBean.salvar}" 
+                                         update="formReserva:messages formReserva:tabelaReservas"
+                                         icon="pi pi-save"
+                                         styleClass="ui-button-success"/>
+                        
+                        <p:commandButton value="Nova" 
+                                         action="#{reservaBean.novo}" 
+                                         update="formReserva"
+                                         process="@this"
+                                         icon="pi pi-plus"
+                                         styleClass="ui-button-info"
+                                         style="margin-left: 10px;"/>
+                    </div>
+                </div>
+            </p:panel>
+            
+            <p:panel header="Lista de Reservas" style="margin-top: 20px;">
+                <p:dataTable id="tabelaReservas" 
+                             value="#{reservaBean.reservas}" 
+                             var="reserva"
+                             paginator="true" 
+                             rows="10"
+                             emptyMessage="Nenhuma reserva cadastrada">
+                    
+                    <p:column headerText="ID" style="width: 50px;">
+                        <h:outputText value="#{reserva.id}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Sala">
+                        <h:outputText value="#{reserva.sala.nome}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Unidade">
+                        <h:outputText value="#{reservaBean.getNomeUnidadeSala(reserva)}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Usuário">
+                        <h:outputText value="#{reserva.usuario.nome}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Data/Hora Início" sortBy="#{reserva.dataHoraInicio}">
+                        <h:outputText value="#{reserva.dataHoraInicio}">
+                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                        </h:outputText>
+                    </p:column>
+                    
+                    <p:column headerText="Data/Hora Fim">
+                        <h:outputText value="#{reserva.dataHoraFim}">
+                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                        </h:outputText>
+                    </p:column>
+                    
+                    <p:column headerText="Status">
+                        <h:outputText value="#{reservaBean.getStatusReserva(reserva)}" 
+                                      styleClass="#{reservaBean.getStatusClass(reserva)}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Ações" style="width: 180px; text-align: center;">
+                        <p:commandButton icon="pi pi-pencil" 
+                                         action="#{reservaBean.editar(reserva)}"
+                                         update="formReserva"
+                                         styleClass="ui-button-warning"
+                                         disabled="#{!reserva.ativa}"
+                                         title="Editar"/>
+                        
+                        <p:commandButton icon="pi pi-ban" 
+                                         action="#{reservaBean.cancelar(reserva)}"
+                                         update="formReserva:messages formReserva:tabelaReservas"
+                                         styleClass="ui-button-danger"
+                                         disabled="#{!reserva.ativa}"
+                                         style="margin-left: 5px;"
+                                         title="Cancelar">
+                            <p:confirm header="Confirmação" 
+                                       message="Deseja realmente cancelar esta reserva?"
+                                       icon="pi pi-exclamation-triangle"/>
+                        </p:commandButton>
+                        
+                        <p:commandButton icon="pi pi-trash" 
+                                         action="#{reservaBean.excluir(reserva)}"
+                                         update="formReserva:messages formReserva:tabelaReservas"
+                                         styleClass="ui-button-secondary"
+                                         style="margin-left: 5px;"
+                                         title="Excluir">
+                            <p:confirm header="Confirmação" 
+                                       message="Deseja realmente excluir esta reserva?"
+                                       icon="pi pi-exclamation-triangle"/>
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+            </p:panel>
+            
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check"/>
+                <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times"/>
+            </p:confirmDialog>
+        </h:form>
+    </div>
+</h:body>
+</html>

@@ -1,0 +1,36 @@
+```
+
+**Cole este conteúdo:**
+```
+# Diretórios Maven
+.mvn/
+target/classes
+target/generated-sources
+target/maven-status
+target/test-classes
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+.classpath
+.project
+.settings/
+
+# Logs
+*.log
+logs/
+
+# Dados do H2
+data/
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Documentação
+README.md

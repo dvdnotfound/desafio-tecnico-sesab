@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>Gerenciamento de Salas</title>
+    <h:outputStylesheet library="css" name="style.css"/>
+</h:head>
+
+<h:body>
+    <div class="container">
+        <h1>Gerenciamento de Salas</h1>
+        
+        <p:button value="Voltar ao Menu" outcome="index" icon="pi pi-arrow-left" 
+                  styleClass="ui-button-secondary" style="margin-bottom: 20px;"/>
+        
+        <h:form id="formSala">
+            <p:messages id="messages" showDetail="true" closable="true"/>
+            
+            <p:panel header="Cadastro de Sala">
+                <div class="p-fluid p-formgrid p-grid">
+                    <div class="p-field p-col-12 p-md-4">
+                        <p:outputLabel for="nome" value="Nome da Sala:"/>
+                        <p:inputText id="nome" value="#{salaBean.sala.nome}" 
+                                     required="true" requiredMessage="Nome é obrigatório"/>
+                    </div>
+                    
+                    <div class="p-field p-col-12 p-md-4">
+                        <p:outputLabel for="capacidade" value="Capacidade:"/>
+                        <p:inputNumber id="capacidade" value="#{salaBean.sala.capacidade}" 
+                                       decimalPlaces="0" 
+                                       required="true" requiredMessage="Capacidade é obrigatória"/>
+                    </div>
+                    
+                    <div class="p-field p-col-12 p-md-4">
+                        <p:outputLabel for="unidadeSaude" value="Unidade de Saúde:"/>
+                        <p:selectOneMenu id="unidadeSaude" value="#{salaBean.sala.unidadeSaude}" 
+                                         converter="omnifaces.SelectItemsConverter"
+                                         required="true" requiredMessage="Unidade de Saúde é obrigatória">
+                            <f:selectItem itemLabel="Selecione..." itemValue="#{null}"/>
+                            <f:selectItems value="#{salaBean.unidadesSaude}" 
+                                          var="unidade" 
+                                          itemLabel="#{unidade.nome}" 
+                                          itemValue="#{unidade}"/>
+                        </p:selectOneMenu>
+                    </div>
+                    
+                    <div class="p-field p-col-12" style="margin-top: 20px;">
+                        <p:commandButton value="Salvar" 
+                                         action="#{salaBean.salvar}" 
+                                         update="formSala:messages formSala:tabelaSalas"
+                                         icon="pi pi-save"
+                                         styleClass="ui-button-success"/>
+                        
+                        <p:commandButton value="Novo" 
+                                         action="#{salaBean.novo}" 
+                                         update="formSala"
+                                         process="@this"
+                                         icon="pi pi-plus"
+                                         styleClass="ui-button-info"
+                                         style="margin-left: 10px;"/>
+                    </div>
+                </div>
+            </p:panel>
+            
+            <!-- CONSULTA DE DISPONIBILIDADE - REQUISITO DO DESAFIO -->
+            <p:panel header="Consultar Disponibilidade de Salas" style="margin-top: 20px;">
+                <div class="p-fluid p-formgrid p-grid">
+                    <div class="p-field p-col-12 p-md-4">
+                        <p:outputLabel for="unidadeConsulta" value="Unidade de Saúde:"/>
+                        <p:selectOneMenu id="unidadeConsulta" value="#{salaBean.unidadeSaudeIdConsulta}">
+                            <f:selectItem itemLabel="Selecione..." itemValue="#{null}"/>
+                            <f:selectItems value="#{salaBean.unidadesSaude}" 
+                                          var="unidade" 
+                                          itemLabel="#{unidade.nome}" 
+                                          itemValue="#{unidade.id}"/>
+                        </p:selectOneMenu>
+                    </div>
+                    
+                    <div class="p-field p-col-12 p-md-4">
+                        <p:outputLabel for="dataInicio" value="Data/Hora Início:"/>
+                        <p:calendar id="dataInicio" 
+                                    value="#{salaBean.dataHoraInicioConsulta}" 
+                                    pattern="dd/MM/yyyy HH:mm"
+                                    stepMinute="15"
+                                    showTime="true"/>
+                    </div>
+                    
+                    <div class="p-field p-col-12 p-md-4">
+                        <p:outputLabel for="dataFim" value="Data/Hora Fim:"/>
+                        <p:calendar id="dataFim" 
+                                    value="#{salaBean.dataHoraFimConsulta}" 
+                                    pattern="dd/MM/yyyy HH:mm"
+                                    stepMinute="15"
+                                    showTime="true"/>
+                    </div>
+                    
+                    <div class="p-field p-col-12">
+                        <p:commandButton value="Consultar Disponibilidade" 
+                                         action="#{salaBean.consultarDisponibilidade}" 
+                                         update="formSala:messages formSala:tabelaDisponiveis"
+                                         icon="pi pi-search"
+                                         styleClass="ui-button-help"/>
+                    </div>
+                </div>
+                
+                <p:dataTable id="tabelaDisponiveis" 
+                             value="#{salaBean.salasDisponiveis}" 
+                             var="sala"
+                             emptyMessage="Nenhuma sala disponível no período ou consulte para ver resultados"
+                             style="margin-top: 20px;">
+                    
+                    <f:facet name="header">
+                        Salas Disponíveis
+                    </f:facet>
+                    
+                    <p:column headerText="Nome">
+                        <h:outputText value="#{sala.nome}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Capacidade">
+                        <h:outputText value="#{sala.capacidade}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Unidade de Saúde">
+                        <h:outputText value="#{sala.unidadeSaude.nome}"/>
+                    </p:column>
+                </p:dataTable>
+            </p:panel>
+            
+            <p:panel header="Lista de Salas" style="margin-top: 20px;">
+                <p:dataTable id="tabelaSalas" 
+                             value="#{salaBean.salas}" 
+                             var="sala"
+                             paginator="true" 
+                             rows="10"
+                             emptyMessage="Nenhuma sala cadastrada">
+                    
+                    <p:column headerText="ID" style="width: 50px;">
+                        <h:outputText value="#{sala.id}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Nome" sortBy="#{sala.nome}" filterBy="#{sala.nome}">
+                        <h:outputText value="#{sala.nome}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Capacidade">
+                        <h:outputText value="#{sala.capacidade}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Unidade de Saúde" sortBy="#{sala.unidadeSaude.nome}">
+                        <h:outputText value="#{sala.unidadeSaude.nome}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Ações" style="width: 150px; text-align: center;">
+                        <p:commandButton icon="pi pi-pencil" 
+                                         action="#{salaBean.editar(sala)}"
+                                         update="formSala"
+                                         styleClass="ui-button-warning"
+                                         title="Editar"/>
+                        
+                        <p:commandButton icon="pi pi-trash" 
+                                         action="#{salaBean.excluir(sala)}"
+                                         update="formSala:messages formSala:tabelaSalas"
+                                         styleClass="ui-button-danger"
+                                         style="margin-left: 5px;"
+                                         title="Excluir">
+                            <p:confirm header="Confirmação" 
+                                       message="Deseja realmente excluir esta sala?"
+                                       icon="pi pi-exclamation-triangle"/>
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+            </p:panel>
+            
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check"/>
+                <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times"/>
+            </p:confirmDialog>
+        </h:form>
+    </div>
+</h:body>
+</html>

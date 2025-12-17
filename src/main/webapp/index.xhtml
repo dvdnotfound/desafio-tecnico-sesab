@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>Sistema de Gerenciamento de Salas - Teleconsulta</title>
+    <h:outputStylesheet library="css" name="style.css"/>
+</h:head>
+
+<h:body>
+    <div class="container">
+        <h1>Sistema de Gerenciamento de Salas de Espera para Teleconsulta</h1>
+        
+        <div class="menu-grid">
+            <p:panel header="Gestão de Usuários">
+                <p:commandButton value="Gerenciar Usuários" 
+                                 styleClass="ui-button-success"
+                                 onclick="window.location.href='usuario.xhtml'; return false;"/>
+                <p>Cadastro, edição e exclusão de usuários do sistema</p>
+            </p:panel>
+            
+            <p:panel header="Gestão de Pacientes">
+                <p:commandButton value="Gerenciar Pacientes" 
+                                 styleClass="ui-button-info"
+                                 onclick="window.location.href='paciente.xhtml'; return false;"/>
+                <p>Cadastro completo de pacientes com dados pessoais e de saúde</p>
+            </p:panel>
+            
+            <p:panel header="Unidades de Saúde">
+                <p:commandButton value="Gerenciar Unidades" 
+                                 styleClass="ui-button-warning"
+                                 onclick="window.location.href='unidade-saude.xhtml'; return false;"/>
+                <p>Cadastro de unidades de saúde com CNPJ e CNES</p>
+            </p:panel>
+            
+            <p:panel header="Salas de Atendimento">
+                <p:commandButton value="Gerenciar Salas" 
+                                 styleClass="ui-button-help"
+                                 onclick="window.location.href='sala.xhtml'; return false;"/>
+                <p>Cadastro de salas por unidade e consulta de disponibilidade</p>
+            </p:panel>
+            
+            <p:panel header="Reservas de Salas">
+                <p:commandButton value="Gerenciar Reservas" 
+                                 styleClass="ui-button-danger"
+                                 onclick="window.location.href='reserva.xhtml'; return false;"/>
+                <p>Criação e cancelamento de reservas com validação de conflitos</p>
+            </p:panel>
+        </div>
+        
+        <div style="margin-top: 30px; text-align: center;">
+            <p:panel header="Sobre o Sistema">
+                <p><strong>Desenvolvido para gerenciamento de salas de espera em teleconsultas</strong></p>
+                <p>Tecnologias: Java EE, JSF, PrimeFaces, Hibernate, Maven, Docker</p>
+            </p:panel>
+        </div>
+    </div>
+</h:body>
+</html>
