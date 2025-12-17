@@ -46,8 +46,11 @@ public class UsuarioBean implements Serializable {
             addMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Usuário salvo com sucesso!");
             novo();
             carregarUsuarios();
+            FacesContext.getCurrentInstance().getExternalContext()
+                .getRequestMap().put("validationFailed", false);
         } catch (Exception e) {
             addMessage(FacesMessage.SEVERITY_ERROR, "Erro ao salvar", e.getMessage());
+            FacesContext.getCurrentInstance().validationFailed();
         }
     }
     

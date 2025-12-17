@@ -20,56 +20,15 @@
         <h:form id="formUnidade">
             <p:messages id="messages" showDetail="true" closable="true"/>
             
-            <p:panel header="Cadastro de Unidade de Saúde">
-                <div class="p-fluid p-formgrid p-grid">
-                    <div class="p-field p-col-12 p-md-6">
-                        <p:outputLabel for="nome" value="Nome:"/>
-                        <p:inputText id="nome" value="#{unidadeSaudeBean.unidadeSaude.nome}" 
-                                     required="true" requiredMessage="Nome é obrigatório"/>
-                    </div>
-                    
-                    <div class="p-field p-col-12 p-md-6">
-                        <p:outputLabel for="razaoSocial" value="Razão Social:"/>
-                        <p:inputText id="razaoSocial" value="#{unidadeSaudeBean.unidadeSaude.razaoSocial}" 
-                                     required="true" requiredMessage="Razão social é obrigatória"/>
-                    </div>
-                    
-                    <div class="p-field p-col-12 p-md-4">
-                        <p:outputLabel for="sigla" value="Sigla:"/>
-                        <p:inputText id="sigla" value="#{unidadeSaudeBean.unidadeSaude.sigla}"/>
-                    </div>
-                    
-                    <div class="p-field p-col-12 p-md-4">
-                        <p:outputLabel for="cnpj" value="CNPJ:"/>
-                        <p:inputMask id="cnpj" value="#{unidadeSaudeBean.unidadeSaude.cnpj}" 
-                                     mask="99.999.999/9999-99"
-                                     required="true" requiredMessage="CNPJ é obrigatório"/>
-                    </div>
-                    
-                    <div class="p-field p-col-12 p-md-4">
-                        <p:outputLabel for="cnes" value="CNES:"/>
-                        <p:inputText id="cnes" value="#{unidadeSaudeBean.unidadeSaude.cnes}"/>
-                    </div>
-                    
-                    <div class="p-field p-col-12" style="margin-top: 20px;">
-                        <p:commandButton value="Salvar" 
-                                         action="#{unidadeSaudeBean.salvar}" 
-                                         update="formUnidade:messages formUnidade:tabelaUnidades"
-                                         icon="pi pi-save"
-                                         styleClass="ui-button-success"/>
-                        
-                        <p:commandButton value="Novo" 
-                                         action="#{unidadeSaudeBean.novo}" 
-                                         update="formUnidade"
-                                         process="@this"
-                                         icon="pi pi-plus"
-                                         styleClass="ui-button-info"
-                                         style="margin-left: 10px;"/>
-                    </div>
-                </div>
-            </p:panel>
+            <p:commandButton value="Nova Unidade" 
+                             onclick="PF('dlgUnidade').show();" 
+                             action="#{unidadeSaudeBean.novo}"
+                             update="dialogForm"
+                             icon="pi pi-plus"
+                             styleClass="ui-button-success"
+                             style="margin-bottom: 20px;"/>
             
-            <p:panel header="Lista de Unidades de Saúde" style="margin-top: 20px;">
+            <p:panel header="Lista de Unidades de Saúde">
                 <p:dataTable id="tabelaUnidades" 
                              value="#{unidadeSaudeBean.unidadesSaude}" 
                              var="unidade"
@@ -103,10 +62,14 @@
                     
                     <p:column headerText="Ações" style="width: 150px; text-align: center;">
                         <p:commandButton icon="pi pi-pencil" 
+                                         onclick="PF('dlgUnidade').show();"
                                          action="#{unidadeSaudeBean.editar(unidade)}"
-                                         update="formUnidade"
+                                         update="dialogForm"
                                          styleClass="ui-button-warning"
-                                         title="Editar"/>
+                                         title="Editar">
+                            <f:setPropertyActionListener value="#{unidade}" 
+                                                        target="#{unidadeSaudeBean.unidadeSaude}"/>
+                        </p:commandButton>
                         
                         <p:commandButton icon="pi pi-trash" 
                                          action="#{unidadeSaudeBean.excluir(unidade)}"
@@ -127,6 +90,60 @@
                 <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times"/>
             </p:confirmDialog>
         </h:form>
+        
+        <p:dialog header="Cadastro de Unidade de Saúde" widgetVar="dlgUnidade" modal="true" 
+                  showEffect="fade" hideEffect="fade" resizable="false" width="700">
+            <h:form id="dialogForm">
+                <p:messages id="dialogMessages" showDetail="true" closable="true"/>
+                
+                <div class="p-fluid p-formgrid p-grid">
+                    <div class="p-field p-col-12 p-md-6">
+                        <p:outputLabel for="nome" value="Nome:"/>
+                        <p:inputText id="nome" value="#{unidadeSaudeBean.unidadeSaude.nome}" 
+                                     required="true" requiredMessage="Nome é obrigatório"/>
+                    </div>
+                    
+                    <div class="p-field p-col-12 p-md-6">
+                        <p:outputLabel for="razaoSocial" value="Razão Social:"/>
+                        <p:inputText id="razaoSocial" value="#{unidadeSaudeBean.unidadeSaude.razaoSocial}" 
+                                     required="true" requiredMessage="Razão social é obrigatória"/>
+                    </div>
+                    
+                    <div class="p-field p-col-12 p-md-4">
+                        <p:outputLabel for="sigla" value="Sigla:"/>
+                        <p:inputText id="sigla" value="#{unidadeSaudeBean.unidadeSaude.sigla}"/>
+                    </div>
+                    
+                    <div class="p-field p-col-12 p-md-4">
+                        <p:outputLabel for="cnpj" value="CNPJ:"/>
+                        <p:inputMask id="cnpj" value="#{unidadeSaudeBean.unidadeSaude.cnpj}" 
+                                     mask="99.999.999/9999-99"
+                                     required="true" requiredMessage="CNPJ é obrigatório"/>
+                    </div>
+                    
+                    <div class="p-field p-col-12 p-md-4">
+                        <p:outputLabel for="cnes" value="CNES:"/>
+                        <p:inputText id="cnes" value="#{unidadeSaudeBean.unidadeSaude.cnes}"/>
+                    </div>
+                    
+                    <div class="p-field p-col-12" style="margin-top: 20px;">
+                        <p:commandButton value="Salvar" 
+                                         action="#{unidadeSaudeBean.salvar}" 
+                                         update="dialogMessages,:formUnidade:messages,:formUnidade:tabelaUnidades"
+                                         oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlgUnidade').hide();"
+                                         icon="pi pi-save"
+                                         styleClass="ui-button-success"/>
+                        
+                        <p:commandButton value="Cancelar" 
+                                         onclick="PF('dlgUnidade').hide();"
+                                         type="button"
+                                         icon="pi pi-times"
+                                         styleClass="ui-button-secondary"
+                                         style="margin-left: 10px;"/>
+                    </div>
+                </div>
+            </h:form>
+        </p:dialog>
     </div>
 </h:body>
 </html>

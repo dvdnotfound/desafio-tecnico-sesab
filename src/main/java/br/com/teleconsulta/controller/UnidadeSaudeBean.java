@@ -46,8 +46,11 @@ public class UnidadeSaudeBean implements Serializable {
             addMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Unidade de Saúde salva com sucesso!");
             novo();
             carregarUnidades();
+            FacesContext.getCurrentInstance().getExternalContext()
+                .getRequestMap().put("validationFailed", false);
         } catch (Exception e) {
             addMessage(FacesMessage.SEVERITY_ERROR, "Erro ao salvar", e.getMessage());
+            FacesContext.getCurrentInstance().validationFailed();
         }
     }
     

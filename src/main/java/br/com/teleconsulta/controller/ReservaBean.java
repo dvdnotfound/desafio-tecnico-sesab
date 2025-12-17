@@ -70,20 +70,20 @@ public class ReservaBean implements Serializable {
         reserva = new Reserva();
     }
     
-    /**
-     * MÉTODO DO DESAFIO: Criar reserva com validação de conflitos
-     */
     public void salvar() {
         try {
             reservaService.salvar(reserva);
             addMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Reserva criada com sucesso!");
             novo();
             carregarReservas();
+            FacesContext.getCurrentInstance().getExternalContext()
+                .getRequestMap().put("validationFailed", false);
         } catch (IllegalArgumentException e) {
-            // Erros de validação (incluindo conflitos)
             addMessage(FacesMessage.SEVERITY_ERROR, "Erro de validação", e.getMessage());
+            FacesContext.getCurrentInstance().validationFailed();
         } catch (Exception e) {
             addMessage(FacesMessage.SEVERITY_ERROR, "Erro ao salvar", e.getMessage());
+            FacesContext.getCurrentInstance().validationFailed();
         }
     }
     

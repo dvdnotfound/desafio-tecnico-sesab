@@ -15,17 +15,26 @@
         <class>br.com.teleconsulta.model.Reserva</class>
 
         <properties>
+            <!-- Configuração H2 em memória (funciona sempre) -->
             <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>
-            <property name="javax.persistence.jdbc.url" 
-                      value="jdbc:h2:file:./data/teleconsulta;AUTO_SERVER=TRUE"/>
+            <property name="javax.persistence.jdbc.url" value="jdbc:h2:file:/tmp/teleconsulta;AUTO_SERVER=TRUE"/>
             <property name="javax.persistence.jdbc.user" value="sa"/>
             <property name="javax.persistence.jdbc.password" value=""/>
 
+            <!-- Hibernate Dialect -->
             <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
-            <property name="hibernate.hbm2ddl.auto" value="update"/>
+
+            <!-- Criar schema automaticamente -->
+            <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
+
+            <!-- Exibir SQL -->
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.format_sql" value="true"/>
+
+            <!-- Pool de conexões -->
             <property name="hibernate.connection.pool_size" value="10"/>
+
+            <!-- Cache -->
             <property name="hibernate.cache.use_second_level_cache" value="false"/>
             <property name="hibernate.cache.use_query_cache" value="false"/>
         </properties>

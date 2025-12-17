@@ -20,7 +20,82 @@
         <h:form id="formPaciente">
             <p:messages id="messages" showDetail="true" closable="true"/>
             
-            <p:panel header="Cadastro de Paciente">
+            <p:commandButton value="Novo Paciente" 
+                             onclick="PF('dlgPaciente').show();" 
+                             action="#{pacienteBean.novo}"
+                             update="dialogForm"
+                             icon="pi pi-plus"
+                             styleClass="ui-button-success"
+                             style="margin-bottom: 20px;"/>
+            
+            <p:panel header="Lista de Pacientes">
+                <p:dataTable id="tabelaPacientes" 
+                             value="#{pacienteBean.pacientes}" 
+                             var="paciente"
+                             paginator="true" 
+                             rows="10"
+                             emptyMessage="Nenhum paciente cadastrado">
+                    
+                    <p:column headerText="ID" style="width: 50px;">
+                        <h:outputText value="#{paciente.id}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Nome" sortBy="#{paciente.nome}" filterBy="#{paciente.nome}">
+                        <h:outputText value="#{paciente.nome}"/>
+                    </p:column>
+                    
+                    <p:column headerText="CPF">
+                        <h:outputText value="#{paciente.cpf}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Sexo">
+                        <h:outputText value="#{paciente.sexo}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Data Nascimento">
+                        <h:outputText value="#{paciente.dataNascimento}" converter="localDateConverter"/>
+                    </p:column>
+                    
+                    <p:column headerText="Telefone">
+                        <h:outputText value="#{paciente.telefone}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Ações" style="width: 150px; text-align: center;">
+                        <p:commandButton icon="pi pi-pencil" 
+                                         onclick="PF('dlgPaciente').show();"
+                                         action="#{pacienteBean.editar(paciente)}"
+                                         update="dialogForm"
+                                         styleClass="ui-button-warning"
+                                         title="Editar">
+                            <f:setPropertyActionListener value="#{paciente}" 
+                                                        target="#{pacienteBean.paciente}"/>
+                        </p:commandButton>
+                        
+                        <p:commandButton icon="pi pi-trash" 
+                                         action="#{pacienteBean.excluir(paciente)}"
+                                         update="formPaciente:messages formPaciente:tabelaPacientes"
+                                         styleClass="ui-button-danger"
+                                         style="margin-left: 5px;"
+                                         title="Excluir">
+                            <p:confirm header="Confirmação" 
+                                       message="Deseja realmente excluir este paciente?"
+                                       icon="pi pi-exclamation-triangle"/>
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+            </p:panel>
+            
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check"/>
+                <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times"/>
+            </p:confirmDialog>
+        </h:form>
+        
+        <p:dialog header="Cadastro de Paciente" widgetVar="dlgPaciente" modal="true" 
+                  showEffect="fade" hideEffect="fade" resizable="false" width="800">
+            <h:form id="dialogForm">
+                <p:messages id="dialogMessages" showDetail="true" closable="true"/>
+                
                 <div class="p-fluid p-formgrid p-grid">
                     <div class="p-field p-col-12 p-md-6">
                         <p:outputLabel for="nome" value="Nome Completo:"/>
@@ -47,7 +122,7 @@
                         <p:calendar id="dataNascimento" value="#{pacienteBean.paciente.dataNascimento}" 
                                     pattern="dd/MM/yyyy" 
                                     required="true" requiredMessage="Data de nascimento é obrigatória"
-                                    mask="true"/>
+                                    mask="true" converter="localDateConverter"/>
                     </div>
                     
                     <div class="p-field p-col-12 p-md-4">
@@ -96,81 +171,21 @@
                     <div class="p-field p-col-12" style="margin-top: 20px;">
                         <p:commandButton value="Salvar" 
                                          action="#{pacienteBean.salvar}" 
-                                         update="formPaciente:messages formPaciente:tabelaPacientes"
+                                         update="dialogMessages,:formPaciente:messages,:formPaciente:tabelaPacientes"
+                                         oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlgPaciente').hide();"
                                          icon="pi pi-save"
                                          styleClass="ui-button-success"/>
                         
-                        <p:commandButton value="Novo" 
-                                         action="#{pacienteBean.novo}" 
-                                         update="formPaciente"
-                                         process="@this"
-                                         icon="pi pi-plus"
-                                         styleClass="ui-button-info"
+                        <p:commandButton value="Cancelar" 
+                                         onclick="PF('dlgPaciente').hide();"
+                                         type="button"
+                                         icon="pi pi-times"
+                                         styleClass="ui-button-secondary"
                                          style="margin-left: 10px;"/>
                     </div>
                 </div>
-            </p:panel>
-            
-            <p:panel header="Lista de Pacientes" style="margin-top: 20px;">
-                <p:dataTable id="tabelaPacientes" 
-                             value="#{pacienteBean.pacientes}" 
-                             var="paciente"
-                             paginator="true" 
-                             rows="10"
-                             emptyMessage="Nenhum paciente cadastrado">
-                    
-                    <p:column headerText="ID" style="width: 50px;">
-                        <h:outputText value="#{paciente.id}"/>
-                    </p:column>
-                    
-                    <p:column headerText="Nome" sortBy="#{paciente.nome}" filterBy="#{paciente.nome}">
-                        <h:outputText value="#{paciente.nome}"/>
-                    </p:column>
-                    
-                    <p:column headerText="CPF">
-                        <h:outputText value="#{paciente.cpf}"/>
-                    </p:column>
-                    
-                    <p:column headerText="Sexo">
-                        <h:outputText value="#{paciente.sexo}"/>
-                    </p:column>
-                    
-                    <p:column headerText="Data Nascimento">
-                        <h:outputText value="#{paciente.dataNascimento}">
-                            <f:convertDateTime pattern="dd/MM/yyyy"/>
-                        </h:outputText>
-                    </p:column>
-                    
-                    <p:column headerText="Telefone">
-                        <h:outputText value="#{paciente.telefone}"/>
-                    </p:column>
-                    
-                    <p:column headerText="Ações" style="width: 150px; text-align: center;">
-                        <p:commandButton icon="pi pi-pencil" 
-                                         action="#{pacienteBean.editar(paciente)}"
-                                         update="formPaciente"
-                                         styleClass="ui-button-warning"
-                                         title="Editar"/>
-                        
-                        <p:commandButton icon="pi pi-trash" 
-                                         action="#{pacienteBean.excluir(paciente)}"
-                                         update="formPaciente:messages formPaciente:tabelaPacientes"
-                                         styleClass="ui-button-danger"
-                                         style="margin-left: 5px;"
-                                         title="Excluir">
-                            <p:confirm header="Confirmação" 
-                                       message="Deseja realmente excluir este paciente?"
-                                       icon="pi pi-exclamation-triangle"/>
-                        </p:commandButton>
-                    </p:column>
-                </p:dataTable>
-            </p:panel>
-            
-            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-                <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check"/>
-                <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times"/>
-            </p:confirmDialog>
-        </h:form>
+            </h:form>
+        </p:dialog>
     </div>
 </h:body>
 </html>

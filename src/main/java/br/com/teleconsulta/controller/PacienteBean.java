@@ -49,8 +49,11 @@ public class PacienteBean implements Serializable {
             addMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Paciente salvo com sucesso!");
             novo();
             carregarPacientes();
+            FacesContext.getCurrentInstance().getExternalContext()
+                .getRequestMap().put("validationFailed", false);
         } catch (Exception e) {
             addMessage(FacesMessage.SEVERITY_ERROR, "Erro ao salvar", e.getMessage());
+            FacesContext.getCurrentInstance().validationFailed();
         }
     }
     

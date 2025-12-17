@@ -20,7 +20,100 @@
         <h:form id="formReserva">
             <p:messages id="messages" showDetail="true" closable="true"/>
             
-            <p:panel header="Criar Reserva">
+            <p:commandButton value="Nova Reserva" 
+                             onclick="PF('dlgReserva').show();" 
+                             action="#{reservaBean.novo}"
+                             update="dialogForm"
+                             icon="pi pi-plus"
+                             styleClass="ui-button-success"
+                             style="margin-bottom: 20px;"/>
+            
+            <p:panel header="Lista de Reservas">
+                <p:dataTable id="tabelaReservas" 
+                             value="#{reservaBean.reservas}" 
+                             var="reserva"
+                             paginator="true" 
+                             rows="10"
+                             emptyMessage="Nenhuma reserva cadastrada">
+                    
+                    <p:column headerText="ID" style="width: 50px;">
+                        <h:outputText value="#{reserva.id}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Sala">
+                        <h:outputText value="#{reserva.sala.nome}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Unidade">
+                        <h:outputText value="#{reservaBean.getNomeUnidadeSala(reserva)}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Usuário">
+                        <h:outputText value="#{reserva.usuario.nome}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Data/Hora Início" sortBy="#{reserva.dataHoraInicio}">
+                        <h:outputText value="#{reserva.dataHoraInicio}" converter="localDateTimeConverter"/>
+                    </p:column>
+                    
+                    <p:column headerText="Data/Hora Fim">
+                        <h:outputText value="#{reserva.dataHoraFim}" converter="localDateTimeConverter"/>
+                    </p:column>
+                    
+                    <p:column headerText="Status">
+                        <h:outputText value="#{reservaBean.getStatusReserva(reserva)}" 
+                                      styleClass="#{reservaBean.getStatusClass(reserva)}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Ações" style="width: 180px; text-align: center;">
+                        <p:commandButton icon="pi pi-pencil" 
+                                         onclick="PF('dlgReserva').show();"
+                                         action="#{reservaBean.editar(reserva)}"
+                                         update="dialogForm"
+                                         styleClass="ui-button-warning"
+                                         disabled="#{!reserva.ativa}"
+                                         title="Editar">
+                            <f:setPropertyActionListener value="#{reserva}" 
+                                                        target="#{reservaBean.reserva}"/>
+                        </p:commandButton>
+                        
+                        <p:commandButton icon="pi pi-ban" 
+                                         action="#{reservaBean.cancelar(reserva)}"
+                                         update="formReserva:messages formReserva:tabelaReservas"
+                                         styleClass="ui-button-danger"
+                                         disabled="#{!reserva.ativa}"
+                                         style="margin-left: 5px;"
+                                         title="Cancelar">
+                            <p:confirm header="Confirmação" 
+                                       message="Deseja realmente cancelar esta reserva?"
+                                       icon="pi pi-exclamation-triangle"/>
+                        </p:commandButton>
+                        
+                        <p:commandButton icon="pi pi-trash" 
+                                         action="#{reservaBean.excluir(reserva)}"
+                                         update="formReserva:messages formReserva:tabelaReservas"
+                                         styleClass="ui-button-secondary"
+                                         style="margin-left: 5px;"
+                                         title="Excluir">
+                            <p:confirm header="Confirmação" 
+                                       message="Deseja realmente excluir esta reserva?"
+                                       icon="pi pi-exclamation-triangle"/>
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+            </p:panel>
+            
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check"/>
+                <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times"/>
+            </p:confirmDialog>
+        </h:form>
+        
+        <p:dialog header="Criar Reserva" widgetVar="dlgReserva" modal="true" 
+                  showEffect="fade" hideEffect="fade" resizable="false" width="700">
+            <h:form id="dialogForm">
+                <p:messages id="dialogMessages" showDetail="true" closable="true"/>
+                
                 <div class="p-fluid p-formgrid p-grid">
                     <div class="p-field p-col-12 p-md-6">
                         <p:outputLabel for="sala" value="Sala:"/>
@@ -73,101 +166,21 @@
                     <div class="p-field p-col-12" style="margin-top: 20px;">
                         <p:commandButton value="Criar Reserva" 
                                          action="#{reservaBean.salvar}" 
-                                         update="formReserva:messages formReserva:tabelaReservas"
+                                         update="dialogMessages,:formReserva:messages,:formReserva:tabelaReservas"
+                                         oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlgReserva').hide();"
                                          icon="pi pi-save"
                                          styleClass="ui-button-success"/>
                         
-                        <p:commandButton value="Nova" 
-                                         action="#{reservaBean.novo}" 
-                                         update="formReserva"
-                                         process="@this"
-                                         icon="pi pi-plus"
-                                         styleClass="ui-button-info"
+                        <p:commandButton value="Cancelar" 
+                                         onclick="PF('dlgReserva').hide();"
+                                         type="button"
+                                         icon="pi pi-times"
+                                         styleClass="ui-button-secondary"
                                          style="margin-left: 10px;"/>
                     </div>
                 </div>
-            </p:panel>
-            
-            <p:panel header="Lista de Reservas" style="margin-top: 20px;">
-                <p:dataTable id="tabelaReservas" 
-                             value="#{reservaBean.reservas}" 
-                             var="reserva"
-                             paginator="true" 
-                             rows="10"
-                             emptyMessage="Nenhuma reserva cadastrada">
-                    
-                    <p:column headerText="ID" style="width: 50px;">
-                        <h:outputText value="#{reserva.id}"/>
-                    </p:column>
-                    
-                    <p:column headerText="Sala">
-                        <h:outputText value="#{reserva.sala.nome}"/>
-                    </p:column>
-                    
-                    <p:column headerText="Unidade">
-                        <h:outputText value="#{reservaBean.getNomeUnidadeSala(reserva)}"/>
-                    </p:column>
-                    
-                    <p:column headerText="Usuário">
-                        <h:outputText value="#{reserva.usuario.nome}"/>
-                    </p:column>
-                    
-                    <p:column headerText="Data/Hora Início" sortBy="#{reserva.dataHoraInicio}">
-                        <h:outputText value="#{reserva.dataHoraInicio}">
-                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
-                        </h:outputText>
-                    </p:column>
-                    
-                    <p:column headerText="Data/Hora Fim">
-                        <h:outputText value="#{reserva.dataHoraFim}">
-                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
-                        </h:outputText>
-                    </p:column>
-                    
-                    <p:column headerText="Status">
-                        <h:outputText value="#{reservaBean.getStatusReserva(reserva)}" 
-                                      styleClass="#{reservaBean.getStatusClass(reserva)}"/>
-                    </p:column>
-                    
-                    <p:column headerText="Ações" style="width: 180px; text-align: center;">
-                        <p:commandButton icon="pi pi-pencil" 
-                                         action="#{reservaBean.editar(reserva)}"
-                                         update="formReserva"
-                                         styleClass="ui-button-warning"
-                                         disabled="#{!reserva.ativa}"
-                                         title="Editar"/>
-                        
-                        <p:commandButton icon="pi pi-ban" 
-                                         action="#{reservaBean.cancelar(reserva)}"
-                                         update="formReserva:messages formReserva:tabelaReservas"
-                                         styleClass="ui-button-danger"
-                                         disabled="#{!reserva.ativa}"
-                                         style="margin-left: 5px;"
-                                         title="Cancelar">
-                            <p:confirm header="Confirmação" 
-                                       message="Deseja realmente cancelar esta reserva?"
-                                       icon="pi pi-exclamation-triangle"/>
-                        </p:commandButton>
-                        
-                        <p:commandButton icon="pi pi-trash" 
-                                         action="#{reservaBean.excluir(reserva)}"
-                                         update="formReserva:messages formReserva:tabelaReservas"
-                                         styleClass="ui-button-secondary"
-                                         style="margin-left: 5px;"
-                                         title="Excluir">
-                            <p:confirm header="Confirmação" 
-                                       message="Deseja realmente excluir esta reserva?"
-                                       icon="pi pi-exclamation-triangle"/>
-                        </p:commandButton>
-                    </p:column>
-                </p:dataTable>
-            </p:panel>
-            
-            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-                <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check"/>
-                <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times"/>
-            </p:confirmDialog>
-        </h:form>
+            </h:form>
+        </p:dialog>
     </div>
 </h:body>
 </html>

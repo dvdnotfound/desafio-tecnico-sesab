@@ -20,46 +20,17 @@
         <h:form id="formUsuario">
             <p:messages id="messages" showDetail="true" closable="true"/>
             
-            <p:panel header="Cadastro de Usuário">
-                <div class="p-fluid">
-                    <div class="p-field">
-                        <p:outputLabel for="nome" value="Nome:"/>
-                        <p:inputText id="nome" value="#{usuarioBean.usuario.nome}" 
-                                     required="true" requiredMessage="Nome é obrigatório"/>
-                    </div>
-                    
-                    <div class="p-field">
-                        <p:outputLabel for="email" value="E-mail:"/>
-                        <p:inputText id="email" value="#{usuarioBean.usuario.email}" 
-                                     required="true" requiredMessage="E-mail é obrigatório"/>
-                    </div>
-                    
-                    <div class="p-field">
-                        <p:outputLabel for="cpf" value="CPF:"/>
-                        <p:inputMask id="cpf" value="#{usuarioBean.usuario.cpf}" 
-                                     mask="999.999.999-99"
-                                     required="true" requiredMessage="CPF é obrigatório"/>
-                    </div>
-                    
-                    <div class="p-field" style="margin-top: 20px;">
-                        <p:commandButton value="Salvar" 
-                                         action="#{usuarioBean.salvar}" 
-                                         update="formUsuario:messages formUsuario:tabelaUsuarios"
-                                         icon="pi pi-save"
-                                         styleClass="ui-button-success"/>
-                        
-                        <p:commandButton value="Novo" 
-                                         action="#{usuarioBean.novo}" 
-                                         update="formUsuario"
-                                         process="@this"
-                                         icon="pi pi-plus"
-                                         styleClass="ui-button-info"
-                                         style="margin-left: 10px;"/>
-                    </div>
-                </div>
-            </p:panel>
+            <!-- Botão para abrir dialog -->
+            <p:commandButton value="Novo Usuário" 
+                             onclick="PF('dlgUsuario').show();" 
+                             action="#{usuarioBean.novo}"
+                             update="dialogForm"
+                             icon="pi pi-plus"
+                             styleClass="ui-button-success"
+                             style="margin-bottom: 20px;"/>
             
-            <p:panel header="Lista de Usuários" style="margin-top: 20px;">
+            <!-- Lista de Usuários -->
+            <p:panel header="Lista de Usuários">
                 <p:dataTable id="tabelaUsuarios" 
                              value="#{usuarioBean.usuarios}" 
                              var="usuario"
@@ -84,17 +55,19 @@
                     </p:column>
                     
                     <p:column headerText="Data Cadastro" sortBy="#{usuario.dataCadastro}">
-                        <h:outputText value="#{usuario.dataCadastro}">
-                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
-                        </h:outputText>
+                        <h:outputText value="#{usuario.dataCadastro}" converter="localDateTimeConverter"/>
                     </p:column>
                     
                     <p:column headerText="Ações" style="width: 150px; text-align: center;">
                         <p:commandButton icon="pi pi-pencil" 
+                                         onclick="PF('dlgUsuario').show();"
                                          action="#{usuarioBean.editar(usuario)}"
-                                         update="formUsuario"
+                                         update="dialogForm"
                                          styleClass="ui-button-warning"
-                                         title="Editar"/>
+                                         title="Editar">
+                            <f:setPropertyActionListener value="#{usuario}" 
+                                                        target="#{usuarioBean.usuario}"/>
+                        </p:commandButton>
                         
                         <p:commandButton icon="pi pi-trash" 
                                          action="#{usuarioBean.excluir(usuario)}"
@@ -115,6 +88,51 @@
                 <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times"/>
             </p:confirmDialog>
         </h:form>
+        
+        <!-- Dialog para Cadastro/Edição -->
+        <p:dialog header="Cadastro de Usuário" widgetVar="dlgUsuario" modal="true" 
+                  showEffect="fade" hideEffect="fade" resizable="false" width="600">
+            <h:form id="dialogForm">
+                <p:messages id="dialogMessages" showDetail="true" closable="true"/>
+                
+                <div class="p-fluid">
+                    <div class="p-field">
+                        <p:outputLabel for="nome" value="Nome:"/>
+                        <p:inputText id="nome" value="#{usuarioBean.usuario.nome}" 
+                                     required="true" requiredMessage="Nome é obrigatório"/>
+                    </div>
+                    
+                    <div class="p-field">
+                        <p:outputLabel for="email" value="E-mail:"/>
+                        <p:inputText id="email" value="#{usuarioBean.usuario.email}" 
+                                     required="true" requiredMessage="E-mail é obrigatório"/>
+                    </div>
+                    
+                    <div class="p-field">
+                        <p:outputLabel for="cpf" value="CPF:"/>
+                        <p:inputMask id="cpf" value="#{usuarioBean.usuario.cpf}" 
+                                     mask="999.999.999-99"
+                                     required="true" requiredMessage="CPF é obrigatório"/>
+                    </div>
+                    
+                    <div class="p-field" style="margin-top: 20px;">
+                        <p:commandButton value="Salvar" 
+                                         action="#{usuarioBean.salvar}" 
+                                         update="dialogMessages,:formUsuario:messages,:formUsuario:tabelaUsuarios"
+                                         oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlgUsuario').hide();"
+                                         icon="pi pi-save"
+                                         styleClass="ui-button-success"/>
+                        
+                        <p:commandButton value="Cancelar" 
+                                         onclick="PF('dlgUsuario').hide();"
+                                         type="button"
+                                         icon="pi pi-times"
+                                         styleClass="ui-button-secondary"
+                                         style="margin-left: 10px;"/>
+                    </div>
+                </div>
+            </h:form>
+        </p:dialog>
     </div>
 </h:body>
 </html>

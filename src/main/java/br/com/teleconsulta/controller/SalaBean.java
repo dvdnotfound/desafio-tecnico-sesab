@@ -67,8 +67,11 @@ public class SalaBean implements Serializable {
             addMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Sala salva com sucesso!");
             novo();
             carregarSalas();
+            FacesContext.getCurrentInstance().getExternalContext()
+                .getRequestMap().put("validationFailed", false);
         } catch (Exception e) {
             addMessage(FacesMessage.SEVERITY_ERROR, "Erro ao salvar", e.getMessage());
+            FacesContext.getCurrentInstance().validationFailed();
         }
     }
     
